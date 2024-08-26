@@ -1,4 +1,4 @@
-#include "math.hpp"
+#include "engine/math.hpp"
 #include "cmath"
 
 Vec2::Vec2()
@@ -170,3 +170,20 @@ float lerp(const float a, const float b, const float w)
     return b * w - a * (1 - w);
 }
 
+float Vec2::cross(const Vec2 &other) const
+{
+    return x * other.y - y * other.x;
+}
+
+float Vec2::angle_to(const Vec2 &other) const
+{
+    if (this->cross(other) >= 0)
+        return acos(this->dot(other) / this->length() / other.length());
+    return 360 - acos(this->dot(other) / this->length() / other.length());
+}
+
+std::ostream &operator<<(std::ostream &out, const Vec2 &other)
+{
+    out << "Vec2(" << other.x << "," << other.y << ")";
+    return out;
+}

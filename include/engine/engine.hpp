@@ -1,1 +1,10 @@
-#include "math.hpp"
+#ifndef ENGINE_HPP
+#define ENGINE_HPP
+#include "engine/math.hpp"
+#include "SDL2/SDL.h"
+namespace core
+{
+    void init();
+}
+
+#endif
