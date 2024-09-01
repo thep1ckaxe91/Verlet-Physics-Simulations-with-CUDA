@@ -1,6 +1,6 @@
 #pragma once
-#ifndef VEC2_HPP
-#define VEC2_HPP
+#ifndef MATH_HPP
+#define MATH_HPP
 
 #define M_PI 3.14159265358979323846264338327950288
 #include <ostream>
@@ -16,10 +16,12 @@ struct Vec2
 
     Vec2();
     Vec2(float x, float y);
+    Vec2(const Vec2 &other);
+    Vec2(const Vec3 &v);
     template <typename T>
     inline Vec2(const std::initializer_list<T> &list)
     {
-        if(!std::is_arithmetic<T>::value)
+        if (!std::is_arithmetic<T>::value)
             throw std::invalid_argument("Type must be arithmetic");
         if (list.size() != 2)
         {
@@ -30,7 +32,6 @@ struct Vec2
         x = static_cast<float>(*it++);
         y = static_cast<float>(*it);
     }
-    Vec2(const Vec2 &other);
 
     Vec2 operator+(const Vec2 &other) const;
     Vec2 operator-(const Vec2 &other) const;
@@ -40,7 +41,7 @@ struct Vec2
     template <typename T>
     Vec2 &operator=(const std::initializer_list<T> &list)
     {
-        if(!std::is_arithmetic<T>::value)
+        if (!std::is_arithmetic<T>::value)
             throw std::invalid_argument("Type must be arithmetic");
         if (list.size() != 2)
             throw std::invalid_argument("Vec2 initializer list must have exactly 2 elements");
@@ -83,6 +84,17 @@ struct Vec2
     Vec2 move_towards(const Vec2 &other, const float distance) const;
     Vec2 move_towards_ip(const Vec2 &other, const float distance);
 
+    float distance_to(const Vec2 &other) const;
+    float distance_sqr_to(const Vec2 &other) const;
+
+    Vec2 clamp_magnitude(const float max_len) const;
+    Vec2 clamp_magnitude(const float min_len, const float max_len) const;
+
+    Vec2 &clamp_magnitude_ip(const float max_len);
+    Vec2 &clamp_magnitude_ip(const float min_len, const float max_len);    
+
+
+
     /**
      * @brief angle to another vector counter clockwise
      *
@@ -107,10 +119,12 @@ struct Vec3
 
     Vec3();
     Vec3(float x, float y, float z);
+    Vec3(const Vec3 &other);
+    Vec3(const Vec2 &v);
     template <typename T>
     inline Vec3(const std::initializer_list<T> &list)
     {
-        if(!std::is_arithmetic<T>::value)
+        if (!std::is_arithmetic<T>::value)
             throw std::invalid_argument("Type must be arithmetic");
         if (list.size() != 3)
         {
@@ -122,7 +136,6 @@ struct Vec3
         y = static_cast<float>(*it++);
         z = static_cast<float>(*it);
     }
-    Vec3(const Vec3 &other);
 
     Vec3 operator+(const Vec3 &other) const;
     Vec3 operator-(const Vec3 &other) const;
@@ -132,11 +145,11 @@ struct Vec3
     template <typename T>
     Vec3 &operator=(const std::initializer_list<T> &list)
     {
-        if(!std::is_arithmetic<T>::value)
+        if (!std::is_arithmetic<T>::value)
             throw std::invalid_argument("Type must be arithmetic");
         if (list.size() != 3)
             throw std::invalid_argument("Vec3 initializer list must have exactly 3 elements");
-        
+
         auto it = list.begin();
         x = static_cast<float>(*it++);
         y = static_cast<float>(*it++);
@@ -168,13 +181,14 @@ struct Vec3
     Vec3 move_towards(const Vec3 &other, const float distance) const;
     Vec3 move_towards_ip(const Vec3 &other, const float distance);
 
-    /**
-     * @brief angle to another vector counter clockwise
-     *
-     * @param other other vector
-     * @return float result in degree
-     */
-    float angle_to(const Vec3 &other) const;
+    float distance_to(const Vec3 &other) const;
+    float distance_sqr_to(const Vec3 &other) const;
+
+    Vec3 clamp_magnitude(const float max_len) const;
+    Vec3 clamp_magnitude(const float min_len, const float max_len) const;
+
+    Vec3 &clamp_magnitude_ip(const float max_len);
+    Vec3 &clamp_magnitude_ip(const float min_len, const float max_len);    
 
     friend std::ostream &operator<<(std::ostream &out, const Vec3 &other);
 };
