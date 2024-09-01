@@ -4,7 +4,7 @@
 
 #define M_PI 3.14159265358979323846264338327950288
 #include <ostream>
-
+struct Vec3;
 struct Vec2
 {
     float x;
@@ -15,11 +15,18 @@ struct Vec2
     const static Vec2 zero;
 
     Vec2();
-    Vec2(float x, float y);
+    template <typename T1, typename T2>
+    Vec2(T1 x, T2 y)
+    {
+        if (!std::is_arithmetic_v<T1> or !std::is_arithmetic_v<T2>)
+            throw std::invalid_argument("Type must be arithmetic");
+        this->x = x;
+        this->y = y;
+    }
     Vec2(const Vec2 &other);
     Vec2(const Vec3 &v);
     template <typename T>
-    inline Vec2(const std::initializer_list<T> &list)
+    Vec2(const std::initializer_list<T> &list)
     {
         if (!std::is_arithmetic<T>::value)
             throw std::invalid_argument("Type must be arithmetic");
@@ -91,9 +98,7 @@ struct Vec2
     Vec2 clamp_magnitude(const float min_len, const float max_len) const;
 
     Vec2 &clamp_magnitude_ip(const float max_len);
-    Vec2 &clamp_magnitude_ip(const float min_len, const float max_len);    
-
-
+    Vec2 &clamp_magnitude_ip(const float min_len, const float max_len);
 
     /**
      * @brief angle to another vector counter clockwise
@@ -118,7 +123,15 @@ struct Vec3
     const static Vec3 zero;
 
     Vec3();
-    Vec3(float x, float y, float z);
+    template <typename T1, typename T2, typename T3>
+    Vec3(T1 x, T2 y, T3 z)
+    {
+        if (!std::is_arithmetic_v<T1> || !std::is_arithmetic_v<T2> || !std::is_arithmetic_v<T3>)
+            throw std::invalid_argument("Type must be arithmetic");
+        this->x = x;
+        this->y = y;
+        this->z = z;
+    }
     Vec3(const Vec3 &other);
     Vec3(const Vec2 &v);
     template <typename T>
@@ -188,7 +201,30 @@ struct Vec3
     Vec3 clamp_magnitude(const float min_len, const float max_len) const;
 
     Vec3 &clamp_magnitude_ip(const float max_len);
-    Vec3 &clamp_magnitude_ip(const float min_len, const float max_len);    
+    Vec3 &clamp_magnitude_ip(const float min_len, const float max_len);
+
+    Vec3 rotate(const float degree, const Vec3 &axis) const;
+    Vec3 &rotate_ip(const float degree, const Vec3 &axis);
+
+    Vec3 rotate_rad(const float rad, const Vec3 &axis) const;
+    Vec3 &rotate_rad_ip(const float rad, const Vec3 &axis);
+
+    Vec3 rotate_x(const float degree) const;
+    Vec3 &rotate_x_ip(const float degree);
+    Vec3 rotate_y(const float degree) const;
+    Vec3 &rotate_y_ip(const float degree);
+    Vec3 rotate_z(const float degree) const;
+    Vec3 &rotate_z_ip(const float degree);
+
+    Vec3 rotate_rad_x(const float rad) const;
+    Vec3 &rotate_x_rad_ip(const float rad);
+    Vec3 rotate_rad_y(const float rad) const;
+    Vec3 &rotate_y_rad_ip(const float rad);
+    Vec3 rotate_rad_z(const float rad) const;
+    Vec3 &rotate_z_rad_ip(const float rad);
+
+    //return smaller angle to the vector
+    float angle_to(const Vec3 &v) const;
 
     friend std::ostream &operator<<(std::ostream &out, const Vec3 &other);
 };

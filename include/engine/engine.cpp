@@ -2,5 +2,8 @@
 
 void core::init()
 {
-    SDL_Init(SDL_INIT_EVERYTHING);
+    if(SDL_Init(SDL_INIT_EVERYTHING))
+    {
+        throw "Cannot init SDL";
+    }
 }

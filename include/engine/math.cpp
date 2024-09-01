@@ -3,8 +3,6 @@
 
 Vec2::Vec2() : x(0), y(0) {}
 
-Vec2::Vec2(float x, float y) : x(x), y(y) {}
-
 Vec2::Vec2(const Vec2 &other) : x(other.x), y(other.y) {}
 
 Vec2::Vec2(const Vec3 &v) : x(v.x), y(v.y) {}
@@ -91,7 +89,7 @@ Vec2 Vec2::normalize() const
 Vec2 &Vec2::normalize_ip()
 {
     *this /= this->length();
-    return;
+    return *this;
 }
 
 float Vec2::dot(const Vec2 &other) const
@@ -105,7 +103,8 @@ Vec2 Vec2::project(const Vec2 &normal) const
 }
 Vec2 &Vec2::project_ip(const Vec2 &normal)
 {
-    return *this = normal * (this->dot(normal) / normal.sqr_length());
+    *this = normal * (this->dot(normal) / normal.sqr_length());
+    return *this;
 }
 
 Vec2 Vec2::reflect(const Vec2 &normal) const
@@ -268,7 +267,6 @@ const Vec3 Vec3::unit_z = Vec3(0, 0, 1);
 const Vec3 Vec3::zero = Vec3(0, 0, 0);
 
 Vec3::Vec3() : x(0), y(0) {}
-Vec3::Vec3(float x, float y, float z) : x(x), y(y), z(z) {}
 Vec3::Vec3(const Vec3 &other) : x(other.x), y(other.y), z(other.z) {}
 Vec3::Vec3(const Vec2 &v) : x(v.x), y(v.y), z(0) {}
 
@@ -376,7 +374,7 @@ Vec3 &Vec3::normalize_ip()
 Vec3 Vec3::project(const Vec3 &normal) const
 {
     float dot_product = this->dot(normal);
-    float normal_length_squared = normal.dot(normal);
+    float normal_length_squared = normal.sqr_length();
     if (normal_length_squared == 0)
     {
         throw std::invalid_argument("Cannot project onto a zero-length vector");
@@ -392,6 +390,8 @@ Vec3 &Vec3::project_ip(const Vec3 &normal)
         throw std::invalid_argument("Cannot project onto a zero-length vector");
     }
     float projection_factor = dot_product / normal_length_squared;
+    *this = projection_factor * normal;
+    return *this;
 }
 Vec3 Vec3::reflect(const Vec3 &normal) const
 {
@@ -502,3 +502,181 @@ std::ostream &operator<<(std::ostream &out, const Vec3 &other)
     out << "Vec3(" << other.x << "," << other.y << "," << other.z << ")";
     return out;
 }
+
+Vec3 Vec3::rotate(const float degree, const Vec3 &axis) const
+{
+    float rad = degree * (M_PI / 180.0f);
+    float cosA = std::cos(rad);
+    float sinA = std::sin(rad);
+
+    Vec3 nAxis = axis.normalize();
+    Vec3 crossProduct = this->cross(nAxis);
+    float dotProduct = this->dot(nAxis);
+
+    Vec3 rotated = (*this * cosA) + (crossProduct * sinA) + (nAxis * dotProduct * (1 - cosA));
+
+    return rotated;
+}
+
+Vec3 &Vec3::rotate_ip(const float degree, const Vec3 &axis)
+{
+    *this = rotate(degree, axis);
+    return *this;
+}
+
+Vec3 Vec3::rotate_x(const float degree) const
+{
+    float rad = degree * (M_PI / 180.0f);
+    float cosA = std::cos(rad);
+    float sinA = std::sin(rad);
+
+    // Rotation matrix for X-axis
+    Vec3 rotated(x,
+                 cosA * y - sinA * z,
+                 sinA * y + cosA * z);
+
+    return rotated;
+}
+
+Vec3 &Vec3::rotate_x_ip(const float degree)
+{
+    *this = rotate_x(degree);
+    return *this;
+}
+Vec3 Vec3::rotate_y(const float degree) const
+{
+    float rad = degree * (M_PI / 180.0f);
+    float cosA = std::cos(rad);
+    float sinA = std::sin(rad);
+
+    // Rotation matrix for Y-axis
+    Vec3 rotated(cosA * x + sinA * z,
+                 y,
+                 -sinA * x + cosA * z);
+
+    return rotated;
+}
+
+Vec3 &Vec3::rotate_y_ip(const float degree)
+{
+    *this = rotate_y(degree);
+    return *this;
+}
+Vec3 Vec3::rotate_z(const float degree) const
+{
+    float rad = degree * (M_PI / 180.0f);
+    float cosA = std::cos(rad);
+    float sinA = std::sin(rad);
+
+    // Rotation matrix for Z-axis
+    Vec3 rotated(cosA * x - sinA * y,
+                 sinA * x + cosA * y,
+                 z);
+
+    return rotated;
+}
+
+Vec3 &Vec3::rotate_z_ip(const float degree)
+{
+    *this = rotate_z(degree);
+    return *this;
+}
+
+Vec3 Vec3::rotate_rad(const float rad, const Vec3 &axis) const
+{
+    float cosA = std::cos(rad);
+    float sinA = std::sin(rad);
+
+    Vec3 nAxis = axis.normalize(); // Normalize the axis
+    Vec3 crossProduct = this->cross(nAxis);
+    float dotProduct = this->dot(nAxis);
+
+    Vec3 rotated = (*this * cosA) + (crossProduct * sinA) + (nAxis * dotProduct * (1 - cosA));
+
+    return rotated;
+}
+
+Vec3 &Vec3::rotate_rad_ip(const float rad, const Vec3 &axis)
+{
+    *this = rotate_rad(rad, axis);
+    return *this;
+}
+Vec3 Vec3::rotate_rad_x(const float rad) const
+{
+    float cosA = std::cos(rad);
+    float sinA = std::sin(rad);
+
+    // Rotation matrix for X-axis
+    Vec3 rotated(x,
+                 cosA * y - sinA * z,
+                 sinA * y + cosA * z);
+
+    return rotated;
+}
+
+Vec3 &Vec3::rotate_x_rad_ip(const float rad)
+{
+    *this = rotate_rad_x(rad);
+    return *this;
+}
+
+Vec3 Vec3::rotate_rad_y(const float rad) const
+{
+    float cosA = std::cos(rad);
+    float sinA = std::sin(rad);
+
+    // Rotation matrix for Y-axis
+    Vec3 rotated(cosA * x + sinA * z,
+                 y,
+                 -sinA * x + cosA * z);
+
+    return rotated;
+}
+
+Vec3 &Vec3::rotate_y_rad_ip(const float rad)
+{
+    *this = rotate_rad_y(rad);
+    return *this;
+}
+
+Vec3 Vec3::rotate_rad_z(const float rad) const
+{
+    float cosA = std::cos(rad);
+    float sinA = std::sin(rad);
+
+    // Rotation matrix for Z-axis
+    Vec3 rotated(cosA * x - sinA * y,
+                 sinA * x + cosA * y,
+                 z);
+
+    return rotated;
+}
+
+Vec3 &Vec3::rotate_z_rad_ip(const float rad)
+{
+    *this = rotate_rad_z(rad);
+    return *this;
+}
+
+float Vec3::angle_to(const Vec3 &v) const
+{
+    float dotProduct = this->dot(v);
+    float magnitudeA = this->length();
+    float magnitudeB = v.length();
+
+    if (magnitudeA == 0 || magnitudeB == 0)
+    {
+        throw std::invalid_argument("Cannot compute angle with zero-length vector");
+    }
+
+    float cosAngle = dotProduct / (magnitudeA * magnitudeB);
+
+    cosAngle = clamp(cosAngle, -1.0f, 1.0f);
+
+    float angleRad = std::acos(cosAngle);
+
+    float angleDeg = angleRad * (180.0f / static_cast<float>(M_PI));
+
+    return angleDeg;
+}
+
