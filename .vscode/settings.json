@@ -1,3 +1,7 @@
 {
     "C_Cpp.default.compilerPath": "D:/Repos/Verlet-Physics-Simulations-with-CUDA/mingw/bin/g++.exe",
+    "files.associations": {
+        "*.embeddedhtml": "html",
+        "initializer_list": "cpp"
+    },
 }

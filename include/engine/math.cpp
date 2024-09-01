@@ -43,6 +43,11 @@ Vec2 operator*(const float scalar, const Vec2 &v)
     return Vec2(v.x * scalar, v.y * scalar);
 }
 
+Vec2 Vec2::operator-() const
+{
+    return Vec2(-this->x, -this->y);
+}
+
 Vec2 &Vec2::operator+=(const Vec2 &other)
 {
     x += other.x;
@@ -187,3 +192,6 @@ std::ostream &operator<<(std::ostream &out, const Vec2 &other)
     out << "Vec2(" << other.x << "," << other.y << ")";
     return out;
 }
+const Vec2 Vec2::unit_x = Vec2(1, 0);
+const Vec2 Vec2::unit_y = Vec2(0, 1);
+const Vec2 Vec2::zero = Vec2(0, 0);

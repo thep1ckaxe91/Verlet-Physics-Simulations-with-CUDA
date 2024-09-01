@@ -29,20 +29,29 @@ def build_cu_to_obj(file : str):
 
 
 #build all .cpp to .o
+threads : list[Thread] = []
 for root,dirs,files in os.walk("./"):
     if(root == "./src"):
-        threads : list[Thread] = []
         for file in files:
             file_path = path + "src\\" + file
             if file.endswith(".cpp"):
                 threads.append(Thread(target=build_cpp_to_obj,args=[file_path]))
             else:
                 threads.append(Thread(target=build_cu_to_obj,args=[file_path]))
+    elif(root == "./include/engine"):
+        threads : list[Thread] = []
+        for file in files:
+            file_path = path + "src\\" + file
+            if file.endswith(".cpp"):
+                threads.append(Thread(target=build_cpp_to_obj,args=[file_path]))
+            elif file.endswith(".cu"):
+                threads.append(Thread(target=build_cu_to_obj,args=[file_path]))
                 
-        for t in threads:
-            t.start()
-        for t in threads:
-            t.join()
+for t in threads:
+    t.start()
+for t in threads:
+    t.join()
+    
 
 def all_object_file():
     res = " "
