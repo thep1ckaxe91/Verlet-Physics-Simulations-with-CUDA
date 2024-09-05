@@ -17,7 +17,6 @@ int main(int argc, char **argv) {
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
     core::time::Clock clock;
-    
     while(true)
     {
         clock.tick();
