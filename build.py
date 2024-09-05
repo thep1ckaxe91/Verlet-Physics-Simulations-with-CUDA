@@ -79,7 +79,7 @@ def all_object_file():
 
 
 exe_build_command = (
-    f"mingw\\bin\\g++ -Iinclude {all_object_file()} -lmingw32 -lSDL2main -lSDL2 -o VPWC"
+    f"mingw\\bin\\g++ -O3 -Iinclude {all_object_file()} -lmingw32 -lSDL2main -lSDL2 -o VPWC"
 )
 
 os.system(exe_build_command)
