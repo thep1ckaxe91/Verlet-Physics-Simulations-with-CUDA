@@ -4,6 +4,16 @@ Rect::Rect() : x(0), y(0), w(0), h(0) {}
 Rect::Rect(const Rect &other) : x(other.x), y(other.y), w(other.w), h(other.h) {}
 Rect::Rect(const Vec2 &topleft, const Vec2 &size) : x(topleft.x), y(topleft.y), w(size.x), h(size.y) {}
 
+bool Rect::operator==(const Rect &other)
+{
+    return x == other.getLeft() and y == other.getTop() and w == other.getWidth() and h == other.getHeight();
+}
+
+bool Rect::operator==(Rect&& other)
+{
+    return x == other.getLeft() and y == other.getTop() and w == other.getWidth() and h == other.getHeight();
+} 
+
 float Rect::getTop() const
 {
     return y;
@@ -374,4 +384,3 @@ bool Rect::colliderect(const Rect &other) const
              other.getTop() > getBottom() ||
              other.getBottom() < getTop());
 }
-

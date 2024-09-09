@@ -33,7 +33,8 @@ namespace core::time
     void delay(float sec)
     {
         auto start = std::chrono::high_resolution_clock::now();
-        while (std::chrono::high_resolution_clock::now() < start + std::chrono::microseconds((int)(1e6 * sec)))
+        long long micro = (long long)(1e6 * sec);
+        while (std::chrono::high_resolution_clock::now() < start + std::chrono::microseconds(micro))
         {
         }
     }
@@ -63,17 +64,17 @@ namespace core::time
     {
         if (framerate)
         {
-            float time_per_frame = 1/framerate;
+            float time_per_frame = 1 / framerate;
             auto now = std::chrono::high_resolution_clock::now();
-            dt =  now - last_tick;
-            wait(time_per_frame-dt.count()/1e9);
+            dt = now - last_tick;
+            wait(time_per_frame - dt.count() / 1e9);
             last_tick = now;
             return time_per_frame;
         }
         else
         {
             auto now = std::chrono::high_resolution_clock::now();
-            dt =  now - last_tick;
+            dt = now - last_tick;
             float dur = dt.count() / 1e9;
             return dur;
         }
@@ -81,12 +82,12 @@ namespace core::time
 
     float Clock::get_dt()
     {
-        return dt.count()/1e9;
+        return dt.count() / 1e9;
     }
 
     float Clock::get_fps()
     {
-        return 1e9/dt.count();
+        return 1e9 / dt.count();
     }
 
     Timer::Timer(std::string &&msg) : msg((std::string &&)msg)
@@ -96,7 +97,7 @@ namespace core::time
     Timer::~Timer()
     {
         auto dur = std::chrono::high_resolution_clock::now() - start;
-        std::cout << this->msg << std::fixed << std::setprecision(3) << dur.count() / 1e6 << "ms\n";
+        printf_s("%s%.3lf%s\n", msg.c_str(), dur.count() / (dur.count() > 1e6 ? 1e9 : 1e6), (dur.count() > 1e6 ? "s" : "ms"));
     }
 
 }

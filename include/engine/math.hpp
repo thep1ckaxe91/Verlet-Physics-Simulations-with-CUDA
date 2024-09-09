@@ -36,9 +36,24 @@ struct Vec2
         }
 
         auto it = list.begin();
-        x = static_cast<float>(*it++);
-        y = static_cast<float>(*it);
+        x = static_cast<float>(*it);
+        y = static_cast<float>(*(++it));
     }
+    template <typename T>
+    bool operator==(const std::initializer_list<T> &list)
+    {
+        if (list.size() > 2)
+            return false;
+        if (list.size() == 0)
+            return x == 0 and y == 0;
+        auto it = list.begin();
+        if (x != *it)
+            return false;
+        if (y != *(++it))
+            return false;
+        return true;
+    }
+    bool operator==(const Vec2 &other);
 
     Vec2 operator+(const Vec2 &other) const;
     Vec2 operator-(const Vec2 &other) const;
@@ -135,8 +150,13 @@ struct Vec3
     Vec3(const Vec3 &other);
     Vec3(const Vec2 &v);
     template <typename T>
-    inline Vec3(const std::initializer_list<T> &list)
+    Vec3(const std::initializer_list<T> &list)
     {
+        if (list.size() == 0)
+        {
+            x = y = z = 0;
+            return;
+        }
         if (!std::is_arithmetic<T>::value)
             throw std::invalid_argument("Type must be arithmetic");
         if (list.size() != 3)
@@ -158,6 +178,11 @@ struct Vec3
     template <typename T>
     Vec3 &operator=(const std::initializer_list<T> &list)
     {
+        if (list.size() == 0)
+        {
+            x = y = z = 0;
+            return *this;
+        }
         if (!std::is_arithmetic<T>::value)
             throw std::invalid_argument("Type must be arithmetic");
         if (list.size() != 3)
@@ -173,6 +198,25 @@ struct Vec3
     Vec3 &operator-=(const Vec3 &other);
     Vec3 &operator*=(const float scalar);
     Vec3 &operator/=(const float scalar);
+
+    template <typename T>
+    bool operator==(const std::initializer_list<T> &list)
+    {
+        if (list.size() > 3)
+            return false;
+        if (list.size() == 0)
+            return x == 0 and y == 0 and z == 0;
+        auto it = list.begin();
+        if (x != *it)
+            return false;
+        if (y != *(++it))
+            return false;
+        if (z != *(++it))
+            return false;
+        
+        return true;
+    }
+    bool operator==(const Vec3 &other);
 
     float length() const;
     float sqr_length() const;
@@ -223,7 +267,7 @@ struct Vec3
     Vec3 rotate_rad_z(const float rad) const;
     Vec3 &rotate_z_rad_ip(const float rad);
 
-    //return smaller angle to the vector
+    // return smaller angle to the vector
     float angle_to(const Vec3 &v) const;
 
     friend std::ostream &operator<<(std::ostream &out, const Vec3 &other);

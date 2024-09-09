@@ -62,6 +62,10 @@ Vec2 &Vec2::operator/=(const float scalar)
     return *this;
 }
 
+bool Vec2::operator==(const Vec2 &other)
+{
+    return x == other.x and y == other.y;
+}
 float Vec2::length() const
 {
     return std::sqrt(x * x + y * y);
@@ -318,6 +322,11 @@ Vec3 &Vec3::operator/=(const float scalar)
     this->y /= scalar;
     this->z /= scalar;
     return *this;
+}
+
+bool Vec3::operator==(const Vec3 &other)
+{
+    return x == other.x and y == other.y and z == other.z;
 }
 
 float Vec3::length() const
@@ -679,4 +688,3 @@ float Vec3::angle_to(const Vec3 &v) const
 
     return angleDeg;
 }
-

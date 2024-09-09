@@ -49,6 +49,11 @@ public:
     template <typename T>
     Rect(const std::initializer_list<T> &list)
     {
+        if (list.size() == 0)
+        {
+            x = y = w = h = 0;
+            return;
+        }
         if (list.size() != 4)
         {
             throw std::invalid_argument("Initializer list must contain exactly 4 elements.");
@@ -63,6 +68,11 @@ public:
     template <typename T>
     Rect &operator=(const std::initializer_list<T> &list)
     {
+        if (list.size() == 0)
+        {
+            x = y = w = h = 0;
+            return *this;
+        }
         if (list.size() != 4)
         {
             throw std::invalid_argument("Initializer list must contain exactly 4 elements.");
@@ -74,6 +84,24 @@ public:
         h = static_cast<float>(*(++it));
         return *this;
     }
+
+    template <typename T>
+    bool operator==(const std::initializer_list<T> &list)
+    {
+        if (list.size() > 4)
+            return false;
+        if (list.size() == 0)
+            return x == 0 and y == 0 and w == 0 and h == 0;
+        auto it = list.begin();
+        if(x != *it) return false;
+        if(y != *(++it)) return false;
+        if(w != *(++it)) return false;
+        if(h != *(++it)) return false;
+        return true;
+    }
+
+    bool operator==(const Rect& other);
+    bool operator==(Rect&& other);
 
     friend std::ostream &operator<<(std::ostream &out, const Rect &r);
 
@@ -190,9 +218,9 @@ public:
 
     template <typename Container>
     auto collidelist(const Container &r_list) const -> std::enable_if_t<
-                                                         std::is_same<typename Container::value_type, Rect>::value ||
-                                                             std::is_same<typename Container::value_type, const Rect>::value,
-                                                         bool>
+                                                        std::is_same<typename Container::value_type, Rect>::value ||
+                                                            std::is_same<typename Container::value_type, const Rect>::value,
+                                                        bool>
     {
         for (auto &r : r_list)
         {
@@ -203,9 +231,9 @@ public:
     }
     template <typename Container>
     auto collidelistall(const Container &r_list) const -> std::enable_if_t<
-                                                         std::is_same<typename Container::value_type, Rect>::value ||
-                                                             std::is_same<typename Container::value_type, const Rect>::value,
-                                                         std::vector<Rect>>
+                                                           std::is_same<typename Container::value_type, Rect>::value ||
+                                                               std::is_same<typename Container::value_type, const Rect>::value,
+                                                           std::vector<Rect>>
     {
         std::vector<Rect> res;
         for (auto &r : r_list)
@@ -215,19 +243,19 @@ public:
         }
         return res;
     }
-    template<typename T, typename RectExtractorFunc>
+    template <typename T, typename RectExtractorFunc>
     bool collideobject(const T &object, RectExtractorFunc ex) const
     {
         return this->colliderect(ex(object));
     }
-    template<typename T, typename RectExtractorFunc>
+    template <typename T, typename RectExtractorFunc>
     std::vector<int> collideobjectall(const std::vector<T> &objects, RectExtractorFunc ex) const
     {
         std::vector<int> res;
-        int id=0;
+        int id = 0;
         for (auto &o : objects)
         {
-            if (this->collideobject(o,ex))
+            if (this->collideobject(o, ex))
                 res.push_back(id);
             id++;
         }

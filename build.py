@@ -68,7 +68,11 @@ for t in threads:
 for t in threads:
     t.join()
 
-
+print()
+print("+--------------------+")
+print("| Compile phase done |")
+print("+--------------------+")
+print()
 def all_object_file():
     res = " "
     for root, dirs, files in os.walk("./"):
@@ -79,14 +83,14 @@ def all_object_file():
 
 
 exe_build_command = (
-    f"mingw\\bin\\g++ -O3 -Iinclude {all_object_file()} -lmingw32 -lSDL2main -lSDL2 -o VPWC"
+    f"mingw\\bin\\g++ -O3 -Iinclude {all_object_file()} -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -o ./build/VPWC"
 )
 
 os.system(exe_build_command)
 
 import subprocess
 try:
-    sim = subprocess.Popen("VPWC.exe")
+    sim = subprocess.Popen("build/VPWC.exe")
     sim.wait()
 except:
     print()
