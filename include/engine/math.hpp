@@ -1,14 +1,16 @@
-#pragma once
 #ifndef MATH_HPP
 #define MATH_HPP
 
 #define M_PI 3.14159265358979323846264338327950288
 #include <ostream>
+#include <vector>
+#include "SDL2/SDL.h"
+#include "engine/color.hpp"
 struct Vec3;
-struct Vec2
+struct Vec2 : public SDL_FPoint
 {
-    float x;
-    float y;
+    // float x;
+    // float y;
 
     const static Vec2 unit_x;
     const static Vec2 unit_y;
@@ -213,7 +215,7 @@ struct Vec3
             return false;
         if (z != *(++it))
             return false;
-        
+
         return true;
     }
     bool operator==(const Vec3 &other);
@@ -280,5 +282,57 @@ Vec3 operator*(const float scalar, const Vec3 &v);
 float clamp(const float value, const float min, const float max);
 
 float lerp(const float a, const float b, const float w);
+
+struct VertexArray
+{
+    Vec2 *vertices;
+    int size;
+    class Iterator
+    {
+    public:
+        Iterator(VertexArray &va);
+
+        Vec2 &operator*() const;
+        Vec2 *operator->() const;
+
+        Iterator &operator++();
+        Iterator operator+(int x) const;
+        Iterator operator++(int);
+
+        bool operator==(const Iterator &other) const;
+        bool operator!=(const Iterator &other) const;
+
+        void advance(int n);
+
+    private:
+        Vec2 *current;
+    };
+    VertexArray();
+    VertexArray(int size = 0);
+    VertexArray(VertexArray &&va);
+    VertexArray(const VertexArray &other);
+
+    /*TODO: make a function to load vertex from a
+    .vex file contains many lines, each line have the following formular
+
+    float float uint8 uint8 uint8 uint8 float float
+
+    one line must have at least 2 float represent position
+    next 4 uint8 is the info about color
+    next 2 float is info about texture coordinate
+
+    if file is not a .vex format or if file doesnt exist, it will throw an error
+    */
+    static VertexArray from_file(const char *path);
+    static VertexArray from_file(const std::string &path);
+
+    VertexArray &operator=(const VertexArray &other);
+    VertexArray &operator=(VertexArray &&other);
+
+    Iterator begin();
+    Iterator end();
+
+    ~VertexArray();
+};
 
 #endif

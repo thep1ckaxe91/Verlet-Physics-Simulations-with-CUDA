@@ -14,15 +14,13 @@ namespace core::video
     class Renderer
     {
     private:
-        SDL_Renderer *renderer;
-        BlendMode draw_blend_mode;
         Color draw_color;
+        SDL_Renderer *renderer;
+        //leave nullptr to renderer to acsociated
+        Texture* target;
         Vec2 logical_size;
         Vec2 scale;
-        //leave nullptr to renderer to acsociated
-        SDL_Texture* target;
-
-
+        BlendMode draw_blend_mode;
     public:
         Renderer();
         Renderer(const Window& window, int index = -1, int accelerated=-1, bool vsync=false, bool target_texture=false);
@@ -31,7 +29,30 @@ namespace core::video
 
         Renderer &operator=(const Renderer& other);
         Renderer &operator=(Renderer&& other);
-
+        void blit(const Texture& source, Rect srcrect={}, Rect dstrect ={});
+        void draw_line(Vec2 p1, Vec2 p2);
+        void draw_point(Vec2 p);
+        void draw_rect(Rect rect);
+        void fill_rect(Rect rect);
+        void draw_circle(Vec2 center, float radius);
+        template<typename Container>
+        void draw_polygon(Container points)
+        {
+            SDL_RenderGeo   
+        }
+        void clear();
+        void present();
+        void set_logical_size(Vec2 logical_size);
+        Vec2 get_logical_size() const;
+        void set_scale(Vec2 scale);
+        Vec2 get_scale() const;
+        void set_target(Texture* texture = nullptr);
+        /**
+         * @brief Get the reference to the target texture
+         * 
+         * @return Texture& 
+         */
+        Texture &get_target() const;
 
     };
 

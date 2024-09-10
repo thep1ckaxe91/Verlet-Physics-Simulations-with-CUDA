@@ -1,11 +1,11 @@
 #include "engine/math.hpp"
 #include "cmath"
 
-Vec2::Vec2() : x(0), y(0) {}
+Vec2::Vec2() : SDL_FPoint{0, 0} {}
 
-Vec2::Vec2(const Vec2 &other) : x(other.x), y(other.y) {}
+Vec2::Vec2(const Vec2 &other) : SDL_FPoint{other.x, other.y} {}
 
-Vec2::Vec2(const Vec3 &v) : x(v.x), y(v.y) {}
+Vec2::Vec2(const Vec3 &v) : SDL_FPoint{v.x, v.y} {}
 
 Vec2 Vec2::operator+(const Vec2 &other) const
 {
@@ -687,4 +687,56 @@ float Vec3::angle_to(const Vec3 &v) const
     float angleDeg = angleRad * (180.0f / static_cast<float>(M_PI));
 
     return angleDeg;
+}
+
+VertexArray::VertexArray()
+{
+    vertices = nullptr;
+    size = 0;
+};
+
+VertexArray::Iterator VertexArray::begin()
+{
+    return VertexArray::Iterator(*this);
+}
+VertexArray::Iterator VertexArray::end()
+{
+    return VertexArray::Iterator(*this)+this->size;
+}
+
+VertexArray::Iterator VertexArray::Iterator::operator++(int)
+{
+    Iterator temp = *this;
+    ++current;
+    return temp;
+}
+VertexArray::Iterator &VertexArray::Iterator::operator++()
+{
+    ++current;
+    return *this;
+}
+
+VertexArray::Iterator VertexArray::Iterator::operator+(int x) const
+{
+    Iterator temp = *this;
+    temp.advance(x);
+    return temp;
+}
+
+void VertexArray::Iterator::advance(int n)
+{
+    current += n;
+}
+
+VertexArray::Iterator::Iterator(VertexArray &va) : current(va.vertices) {}
+Vec2 &VertexArray::Iterator::operator*() const { return *current; }
+Vec2 *VertexArray::Iterator::operator->() const { return current; }
+
+bool VertexArray::Iterator::operator==(const Iterator &other) const
+{
+    return current == other.current;
+}
+bool VertexArray::Iterator::operator!=(const Iterator &other) const
+{
+    return current != other.current;
 }
