@@ -283,56 +283,15 @@ float clamp(const float value, const float min, const float max);
 
 float lerp(const float a, const float b, const float w);
 
-struct VertexArray
+#pragma pack(push,1) //  make sure there's no padding
+struct Vertex
 {
-    Vec2 *vertices;
-    int size;
-    class Iterator
-    {
-    public:
-        Iterator(VertexArray &va);
+    Vec2 position;
+    Color color;
+    Vec2 tex_coord;
 
-        Vec2 &operator*() const;
-        Vec2 *operator->() const;
-
-        Iterator &operator++();
-        Iterator operator+(int x) const;
-        Iterator operator++(int);
-
-        bool operator==(const Iterator &other) const;
-        bool operator!=(const Iterator &other) const;
-
-        void advance(int n);
-
-    private:
-        Vec2 *current;
-    };
-    VertexArray();
-    VertexArray(int size = 0);
-    VertexArray(VertexArray &&va);
-    VertexArray(const VertexArray &other);
-
-    /*TODO: make a function to load vertex from a
-    .vex file contains many lines, each line have the following formular
-
-    float float uint8 uint8 uint8 uint8 float float
-
-    one line must have at least 2 float represent position
-    next 4 uint8 is the info about color
-    next 2 float is info about texture coordinate
-
-    if file is not a .vex format or if file doesnt exist, it will throw an error
-    */
-    static VertexArray from_file(const char *path);
-    static VertexArray from_file(const std::string &path);
-
-    VertexArray &operator=(const VertexArray &other);
-    VertexArray &operator=(VertexArray &&other);
-
-    Iterator begin();
-    Iterator end();
-
-    ~VertexArray();
+    Vertex();
+    Vertex(Vec2 pos, Color color = Color(0,0,0,0), Vec2 tex_coord={0,0});
 };
-
+#pragma pack(pop)
 #endif

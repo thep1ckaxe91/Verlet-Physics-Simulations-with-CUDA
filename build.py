@@ -20,9 +20,9 @@ def build_cpp_to_obj(file: str):
         os.rename(path + name + ".o", obj_dir + name + ".o")
     except:
         print()
-        print("+--------------+")
-        print("| Build failed |")
-        print("+--------------+")
+        print("+------------------+")
+        print("| Build C++ failed | -----> Check error message")
+        print("+------------------+")
         print()
 
 
@@ -38,9 +38,9 @@ def build_cu_to_obj(file: str):
         os.rename(path + name + ".o", obj_dir + name + ".o")
     except:
         print()
-        print("+--------------+")
-        print("| Build failed | -----> Check error message")
-        print("+--------------+")
+        print("+-------------------+")
+        print("| Build CUDA failed | -----> Check error message")
+        print("+-------------------+")
         print()
 
 
